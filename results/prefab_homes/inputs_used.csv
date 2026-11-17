@@ -1,0 +1,96 @@
+input,base,low,high,unit,source
+finance.company_discount_rate,0.1,0.08,0.15,"fraction/yr, real",Assumption: same rate for every project
+finance.customer_discount_rate,0.08,0.06,0.1,"fraction/yr, real",Assumption: used for customer life-cycle cost vs BAU
+finance.horizon,15,,,yr,Assumption: long enough to reach NOAK in most cases
+finance.cad_usd,0.73,,,USD per CAD,Assumption (approximate 2026 rate)
+scale.big_enough_revenue,1000000000,,,$/yr at full scale,Judgment: a proxy for the Gimbal's 'big-enough line' for an Alphabet business; not stated in the Gimbal
+uncertainty.monte_carlo_draws,2000,,,draws,Convention: triangular distribution on every input with a low/high
+rubric.impact,0.2,,,weight,Mallory's rubric: transformational impact
+rubric.breakthrough,0.2,,,weight,Mallory's rubric: breakthrough potential
+rubric.feasibility,0.15,,,weight,Mallory's rubric: technical feasibility
+rubric.economics,0.15,,,weight,Mallory's rubric: economic competitiveness
+rubric.scalability,0.1,,,weight,Mallory's rubric: scalability
+rubric.demand,0.1,,,weight,Mallory's rubric: market demand and adoption
+rubric.white_space,0.05,,,weight,Mallory's rubric: competitive white space
+rubric.validation,0.05,,,weight,Mallory's rubric: speed and cost of validation
+home.sqft,1800,1200,2400,sq ft per home,"Assumption. Modular homes average ~1,900 sq ft vs ~2,400 site-built (Census, via Floor Trends)."
+bench.site_built_cost_per_sqft,162,,,$/sq ft construction cost,"NAHB 2024 Cost of Constructing a Home: $428,215 for 2,647 sq ft"
+bench.site_built_price_per_sqft,217,,,$/sq ft price excluding land,"NAHB 2024: $665,298 average price less 13.7% finished lot, over 2,647 sq ft"
+bench.modular_discount,0.15,0.1,0.2,fraction below site-built price,Modular is commonly quoted 10-20% below site-built per sq ft; Census permit values ~19% lower
+bench.manufactured_price_per_sqft,87,,,$/sq ft,"Manufactured Housing Institute: $87/sq ft (HUD-code homes, a different product)"
+bench.site_built_months,8.8,,,"months, permit to completion",Census Survey of Construction 2025 via NAHB: 1.4 months authorization to start + 7.4 to finish
+bench.modular_months_saved,1.9,,,months,Census: modular averages 5.0 months start to completion vs 6.9 for site-built
+time.our_months,4.5,3.0,7.0,"months, permit to occupancy",Target. Reframe Systems claims 3x faster than conventional (company-reported).
+price.discount_vs_modular,0.05,0.0,0.15,fraction below conventional modular price,Assumption: must be cost-competitive with conventional prefab
+cost.share_structure,0.3,,,"fraction (framing, roof, envelope)",NAHB 2024: framing 16.6%; exterior finishes added by assumption
+cost.share_mep,0.18,,,"fraction (mechanical, electrical, plumbing rough-ins)",Assumption based on NAHB stage shares
+cost.share_finishes,0.27,,,fraction (interior finishes),Assumption based on NAHB stage shares
+cost.share_site,0.18,,,fraction (site work and foundation),NAHB 2024: site work 7.6% + foundations 10.5%
+cost.share_final,0.07,,,"fraction (final steps, landscaping, other)",Assumption
+cost.transport_set,0.06,0.03,0.1,"added cost, fraction of site-built construction cost","Assumption: trucking, crane and set, which site-built homes don't pay"
+cost.noak_reduction_structure,0.35,0.2,0.5,fraction,Target: robotic framing and envelope. Reframe claims 35% lower total cost (company-reported).
+cost.noak_reduction_mep,0.25,0.1,0.4,fraction,Target: prefabricated wiring and plumbing assemblies; the hardest part to automate
+cost.noak_reduction_finishes,0.2,0.05,0.35,fraction,Target
+cost.noak_reduction_site,0.05,0.0,0.15,fraction,Target: standardized foundations
+cost.noak_reduction_final,0.1,0.0,0.2,fraction,Target
+learning.rate_structure,0.15,0.1,0.2,fraction per doubling,Assumption: typical for automated manufacturing
+learning.rate_mep,0.1,0.05,0.15,fraction per doubling,Assumption
+learning.rate_finishes,0.1,0.05,0.15,fraction per doubling,Assumption
+learning.rate_site,0.03,0.0,0.05,fraction per doubling,Site work learns slowly; UK heat-pump installed costs showed ~0% learning (Renaldi et al. 2020)
+learning.rate_final,0.03,0.0,0.05,fraction per doubling,Assumption
+learning.first_year_experience,50,20,150,cumulative homes at end of FOAK,Assumption: pilot homes
+learning.noak_experience,5000,2000,20000,cumulative homes at which NOAK costs are reached,Assumption: definition of NOAK for this project
+factory.capex,10000000,5000000,50000000,$ per factory,Reframe: <$5M of equipment for 250 homes/yr (claimed); Vantem ~$20M per factory; ground-up modular plants $40-60M (Offsite Builder)
+factory.capacity,250,150,500,homes/yr per factory at full output,Reframe FAB1 design capacity: 250 single-family homes/yr (not yet operating)
+factory.utilization,0.8,0.6,0.95,fraction after first year,"Assumption. 92% of modular factories report excess capacity (industry survey), so demand, not capacity, binds."
+factory.first_year_utilization,0.4,,,fraction in a factory's first year,Assumption
+factory.fixed_opex,3000000,2000000,6000000,$/yr per factory,"Assumption: salaried staff, lease, maintenance (direct labor is in component costs)"
+factory.life,15,,,yr,Assumption
+factory.schedule,"[1, 2, 4, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33]",,,"factories operating, by commercial year (last value holds)",Assumption
+market.single_family_completions,1000000,,,homes/yr,"Census via NAHB: 975,000-1,005,000 single-family completions in 2025"
+market.max_share,0.02,0.01,0.05,cap on our share of single-family completions,Assumption. All modular + panelized was 3% in 2025 (7% in 1998).
+company.rd_years,2,1,3,yr before first sales,"Assumption: robotics, design platform, code approvals, pilot factory"
+company.rd_opex,15000000,8000000,30000000,$/yr,Assumption
+company.corporate_opex,10000000,5000000,20000000,$/yr once selling,"Assumption: design, engineering, sales, admin"
+company.selling_cost,0.036,0.02,0.06,fraction of home revenue,NAHB 2024: sales commission 2.8% + marketing 0.8%
+company.warranty,0.01,0.005,0.03,fraction of home revenue,Assumption
+company.ga_share,0.03,0.02,0.06,fraction of revenue,Assumption. NAHB 2024 builder overhead and general expense is 5.7% of price; part of that sits in factory fixed opex here.
+energy.enabled,1,,,1 = offered,Product as specified: onsite solar + storage
+energy.take_rate,0.6,0.3,0.9,share of buyers,Assumption
+energy.solar_kw,6,,,kW per home,"Assumption: sized for an efficient 1,800 sq ft all-electric home"
+energy.solar_price_per_w,2.5,2.0,2.9,$/W charged,Below the 2026 retrofit average of ~$2.50-3.30/W
+energy.solar_cost_per_w,1.8,1.4,2.3,$/W our installed cost,"Assumption: factory install avoids separate sales, permitting and roof work"
+energy.battery_kwh,13.5,,,kWh per home,One Powerwall-class unit
+energy.battery_price_per_kwh,800,650,1000,$/kWh charged,"Below 2026 installed retrofit prices of ~$700-1,300/kWh"
+energy.battery_cost_per_kwh,550,400,700,$/kWh our installed cost,Assumption. Stationary pack prices ~$70-108/kWh; soft costs are 40-60% of installed residential cost (NREL ATB).
+vpp.enabled,1,,,1 = offered,Enhancement: aggregate home batteries into a virtual power plant
+vpp.enrollment,0.7,0.4,0.9,share of battery homes,Assumption
+vpp.kw_per_home,5,,,kW per battery,Assumption
+vpp.payment_per_kw_year,70,30,100,$/kW-yr,California DSGS pays $62.10-82.80/kW-yr (Brattle). Many markets pay less.
+vpp.our_share,0.3,0.15,0.5,share kept as aggregator,Assumption
+service.enabled,1,,,1 = offered,"Enhancement: home-systems monitoring, maintenance and extended warranty"
+service.fee_per_year,180,120,360,$/home-yr,Assumption (~$15/month)
+service.attach,0.4,0.2,0.6,share of homes,Assumption
+service.margin,0.6,,,fraction,Assumption
+panels.enabled,0,,,1 = offered,Enhancement: sell wall and roof panels to other builders from spare capacity (off in base case)
+panels.revenue_per_factory,3000000,1000000,6000000,$/yr per factory,Assumption
+panels.margin,0.15,0.08,0.25,fraction,Assumption
+adu.enabled,0,,,1 = offered,Enhancement: backyard ADU line (off in base case)
+adu.share_of_units,0.2,,,share of factory output,Assumption
+adu.sqft,600,,,sq ft,Assumption
+adu.price_per_sqft,290,250,330,$/sq ft,Reframe ADUs: $275-300/sq ft
+adu.cost_premium,1.5,,,x home cost per sq ft,Assumption: kitchen and bath spread over fewer sq ft
+adu.slot_fraction,0.5,0.33,1.0,factory slots per ADU (1 = same line time as a full home),"Assumption: a 600 sq ft ADU uses less line time than an 1,800 sq ft home but more than a third of it"
+owner.mortgage_rate,0.065,0.05,0.08,fraction/yr,Assumption
+owner.energy_bill_mixed_fuel,3000,2000,4000,$/yr,"RMI new-construction studies: ~$3,100-3,800/yr in Concord and Boston examples"
+owner.all_electric_bill_change,-0.05,-0.09,0.03,fraction vs mixed fuel,RMI: all-electric bills from 9% lower (Minneapolis) to 3% higher (Boston)
+owner.solar_kwh_per_kw,1400,1100,1700,kWh/kW-yr,Assumption
+owner.electricity_price,0.165,0.12,0.3,$/kWh,"EIA national average residential rate ~$0.165/kWh (2026, as reported)"
+owner.gas_line_avoided,7500,5000,10000,$ per home,"RMI: gas line extensions commonly cost $5,000-10,000 per home"
+score.impact,4,,,1-5,Judgment: US shortage of ~4.7M homes
+score.breakthrough,3,,,1-5,Judgment: robotic MEP and finishes would be a breakthrough; framing robots exist
+score.feasibility,3,,,1-5,Judgment
+score.scalability,4,,,1-5,Judgment: factories can be replicated near demand
+score.demand,4,,,1-5,Judgment
+score.white_space,2,,,1-5,"Judgment: crowded (Reframe, Cuby, Vantem, Boxabl) and a graveyard (Katerra, Veev, Entekra)"
+score.validation,2,,,1-5,Judgment: proving costs needs a factory and dozens of homes

@@ -66,6 +66,27 @@ the finishing savings and the extra month of speed.
 - Tornado leaders: factory capacity, factory capex, price discount, and how many homes it takes to reach NOAK.
 - The Monte Carlo median is still negative (P50 −$49M): the base case sits near the optimistic end of the factory-capex and learning ranges.
 
+## Build-to-rent offtake (scenario)
+
+Rental operators contract 25% of each factory's line at a 7% bulk discount, with
+almost no selling cost; retail buyers fill the rest. US single-family built-for-rent
+starts were 68,000 in 2025 (NAHB), so our ~2,000 homes/yr would be about 3% of it.
+
+| Scenario | NPV |
+|---|---|
+| Retail only (base) | $361M |
+| + build-to-rent at 7% discount | $352M |
+| + build-to-rent at 3% discount | $404M |
+| Weak retail demand (60% fill), retail only | $153M |
+| Weak retail demand (60% fill), + build-to-rent | $197M |
+
+Build-to-rent is insurance, not profit: at a 7% discount it beats retail-only only
+when retail demand fills less than ~77% of the line, or when the discount is under
+~6%. It lowers the utilization needed for NPV = 0 from 45% to 35%. The anchor
+contracts could also speed each new factory's ramp, which is not credited here.
+Policy risk: proposed federal limits on institutional home buyers could shrink
+this market.
+
 ## Energy package by region
 
 Each region gets the package that saves the owner most once it is financed in the
@@ -92,8 +113,7 @@ $13M of NPV. Backup-power value is not counted.
 | Base + ADU line | $415M |
 | All add-ons | $440M |
 
-**Not yet modeled, worth testing next:** build-to-rent offtake contracts (fixes
-utilization), mortgage origination, factory software licensing, disaster-rebuild
+**Not yet modeled, worth testing next:** mortgage origination, factory software licensing, disaster-rebuild
 contracts, wildfire-hardened homes with insurer partnerships, and climate-specific
 variants.
 

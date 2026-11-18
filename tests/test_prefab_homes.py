@@ -76,13 +76,13 @@ def test_cash_is_ebit_less_capex(v):
 
 def test_first_commercial_year_units(v):
     # one new factory at first-year utilization: 250 * 0.40 = 100 homes
-    r = m.run(v)
+    r = m.run({**v, "btr.enabled": 0})
     y = r.years[int(v["company.rd_years"])]
     assert y.revenue_by_stream["homes"] == pytest.approx(100 * 1800 * m.price_per_sqft(v))
 
 
 def test_adu_uses_less_line_time(v):
-    v2 = {**v, "adu.enabled": 1}
+    v2 = {**v, "adu.enabled": 1, "btr.enabled": 0}
     y = m.run(v2).years[int(v["company.rd_years"])]
     adus = 100 * v["adu.share_of_units"] / v["adu.slot_fraction"]
     assert y.revenue_by_stream["adus"] == pytest.approx(adus * 600 * 290)
@@ -122,5 +122,27 @@ def test_package_choice_follows_owner_savings(v):
 
 
 def test_market_cap_binds(v):
-    capped = m.run({**v, "market.max_share": 0.0001})  # 100 homes/yr
+    capped = m.run({**v, "market.max_share": 0.0001, "btr.enabled": 0})  # 100 homes/yr
     assert capped.years[-1].revenue_by_stream["homes"] == pytest.approx(100 * 1800 * m.price_per_sqft(v))
+
+
+def test_btr_fills_its_share_first_in_a_new_factory(v):
+    v = {**v, "btr.enabled": 1}  # 100 homes in year 1: BTR takes 250 * 0.25 = 62.5, retail gets the remaining 37.5
+    y = m.run(v).years[int(v["company.rd_years"])]
+    assert y.revenue_by_stream["btr"] == pytest.approx(62.5 * 1800 * m.price_per_sqft(v) * (1 - 0.07))
+    assert y.revenue_by_stream["homes"] == pytest.approx(37.5 * 1800 * m.price_per_sqft(v))
+
+
+def test_btr_lifts_mature_utilization(v):
+    # mature line: 0.25 + 0.75 * 0.80 = 0.85 vs 0.80 without BTR
+    rd = int(v["company.rd_years"])
+    y_on, y_off = m.run({**v, "btr.enabled": 1}).years[rd + 1], m.run({**v, "btr.enabled": 0}).years[rd + 1]
+    units = lambda y, p: (y.revenue_by_stream["homes"] + y.revenue_by_stream["btr"] / (1 - p)) / (1800 * m.price_per_sqft(v))  # noqa: E731
+    # year 2: one mature factory plus one new factory
+    assert units(y_on, 0.07) == pytest.approx(250 * 0.85 + 100)
+    assert units(y_off, 0.07) == pytest.approx(250 * 0.80 + 100)
+
+
+def test_btr_capped_by_market(v):
+    r = m.run({**v, "btr.enabled": 1, "btr.market_starts": 1000, "btr.max_share": 0.10})  # at most 100 BTR homes/yr
+    assert r.years[-1].revenue_by_stream["btr"] == pytest.approx(100 * 1800 * m.price_per_sqft(v) * 0.93)

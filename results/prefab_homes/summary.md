@@ -12,15 +12,15 @@
 
 | Metric | Value |
 |---|---|
-| NPV | $360.5M |
-| IRR | 28% |
-| Probability NPV > 0 (Monte Carlo) | 44% |
+| NPV | $876.1M |
+| IRR | 32% |
+| Probability NPV > 0 (Monte Carlo) | 71% |
 | Peak cash need | $237.2M |
 | Cash breakeven year | 10 |
 | Revenue in final year | $2.02B |
 | NOAK reached in year | 8 |
 | Extra cost paid while learning (FOAK to NOAK) | $295.5M |
-| NPV if costs started at NOAK (no learning period) | $537.1M |
+| NPV if costs started at NOAK (no learning period) | $1.05B |
 
 ## Customer cost vs BAU
 
@@ -119,29 +119,29 @@ Revenue in the final year by stream:
 
 | Question | Answer | Base input |
 |---|---|---|
-| Factory capex for NPV = 0 | 36,587,965 | 10,000,000 |
-| Factory utilization for NPV = 0 | 0.451 | 0.8 |
-| Price discount vs conventional modular for NPV = 0 | 0.143 | 0.05 |
+| Factory capex for NPV = 0 | 74,621,496 | 10,000,000 |
+| Factory utilization for NPV = 0 | 0.329 | 0.8 |
+| Price discount vs conventional modular for NPV = 0 | 0.185 | 0.05 |
 | MEP cost reduction for NPV = 0 | no crossing in range | 0.25 |
-| Foundation cost reduction for NPV = 0 | -0.486 | 0.4 |
+| Foundation cost reduction for NPV = 0 | -0.906 | 0.4 |
 
 ## Scenarios
 
 | Scenario | NPV | Final-year revenue | Peak cash need |
 |---|---|---|---|
-| With build-to-rent offtake (25% of line, 7% discount) | $351.7M | $2.08B | $249.0M |
-| With build-to-rent offtake at a 3% discount | $403.9M | $2.11B | $232.7M |
-| Weak retail demand (60% fill), no build-to-rent | $153.3M | $1.54B | $262.0M |
-| Weak retail demand (60% fill), with build-to-rent | $197.4M | $1.72B | $269.0M |
-| Conventional site work and crane set (no site system) | $85.1M | $2.02B | $282.7M |
-| Site system, but joints miss tolerance | $308.7M | $2.02B | $243.1M |
-| Homes only (no add-ons) | $346.1M | $1.99B | $240.8M |
-| + Energy package | $358.8M | $2.02B | $237.3M |
-| + Energy package + VPP | $358.9M | $2.02B | $237.3M |
-| Base case (energy + VPP + service) | $360.5M | $2.02B | $237.2M |
-| Base + panels for other builders | $385.7M | $2.12B | $229.2M |
-| Base + ADU line | $415.0M | $2.06B | $222.5M |
-| All add-ons | $440.3M | $2.15B | $217.8M |
+| With build-to-rent offtake (25% of line, 7% discount) | $870.9M | $2.08B | $249.0M |
+| With build-to-rent offtake at a 3% discount | $955.3M | $2.11B | $232.7M |
+| Weak retail demand (60% fill), no build-to-rent | $503.2M | $1.54B | $262.0M |
+| Weak retail demand (60% fill), with build-to-rent | $592.3M | $1.72B | $269.0M |
+| Conventional site work and crane set (no site system) | $395.8M | $2.02B | $282.7M |
+| Site system, but joints miss tolerance | $784.3M | $2.02B | $243.1M |
+| Homes only (no add-ons) | $850.1M | $1.99B | $240.8M |
+| + Energy package | $871.5M | $2.02B | $237.3M |
+| + Energy package + VPP | $871.9M | $2.02B | $237.3M |
+| Base case (energy + VPP + service) | $876.1M | $2.02B | $237.2M |
+| Base + panels for other builders | $916.9M | $2.12B | $229.2M |
+| Base + ADU line | $968.2M | $2.06B | $222.5M |
+| All add-ons | $1.01B | $2.15B | $217.8M |
 
 ## Sensitivity (one input at a time)
 
@@ -149,21 +149,21 @@ Revenue in the final year by stream:
 
 | Input | Low | NPV at low | High | NPV at high |
 |---|---|---|---|---|
-| `factory.capacity` | 150 | -$5.5M | 500 | $1.29B |
-| `factory.capex` | 5,000,000 | $428.3M | 50,000,000 | -$181.8M |
-| `price.discount_vs_modular` | 0.0 | $553.6M | 0.15 | -$25.7M |
-| `learning.noak_experience` | 2,000 | $459.7M | 20,000 | -$10.2M |
-| `home.sqft` | 1,200 | $133.2M | 2,400 | $587.7M |
-| `bench.modular_discount` | 0.1 | $576.3M | 0.2 | $144.6M |
-| `cost.noak_reduction_structure` | 0.2 | $178.4M | 0.5 | $542.5M |
-| `factory.utilization` | 0.6 | $153.3M | 0.95 | $516.2M |
-| `cost.noak_reduction_finishes` | 0.05 | $202.6M | 0.35 | $518.4M |
-| `finance.company_discount_rate` | 0.08 | $478.0M | 0.15 | $171.1M |
-| `factory.fixed_opex` | 2,000,000 | $430.6M | 6,000,000 | $150.1M |
-| `company.rd_years` | 1 | $506.3M | 3 | $239.5M |
-| `cost.noak_reduction_mep` | 0.1 | $255.2M | 0.4 | $465.7M |
-| `site_system.foundation_reduction` | 0.15 | $258.7M | 0.6 | $441.9M |
-| `company.ga_share` | 0.02 | $401.1M | 0.06 | $238.6M |
+| `factory.capacity` | 150 | $244.9M | 500 | $2.47B |
+| `price.discount_vs_modular` | 0.0 | $1.20B | 0.15 | $226.0M |
+| `home.sqft` | 1,200 | $453.3M | 2,400 | $1.30B |
+| `finance.company_discount_rate` | 0.08 | $1.22B | 0.15 | $389.3M |
+| `bench.modular_discount` | 0.1 | $1.24B | 0.2 | $512.8M |
+| `factory.utilization` | 0.6 | $503.2M | 0.95 | $1.16B |
+| `factory.capex` | 5,000,000 | $943.9M | 50,000,000 | $333.8M |
+| `cost.noak_reduction_structure` | 0.2 | $580.5M | 0.5 | $1.17B |
+| `cost.noak_reduction_finishes` | 0.05 | $615.9M | 0.35 | $1.14B |
+| `learning.noak_experience` | 2,000 | $975.3M | 20,000 | $505.4M |
+| `factory.fixed_opex` | 2,000,000 | $989.5M | 6,000,000 | $535.8M |
+| `cost.noak_reduction_mep` | 0.1 | $702.7M | 0.4 | $1.05B |
+| `site_system.foundation_reduction` | 0.15 | $708.4M | 0.6 | $1.01B |
+| `company.ga_share` | 0.02 | $944.5M | 0.06 | $670.9M |
+| `company.selling_cost` | 0.02 | $985.4M | 0.06 | $712.2M |
 
 ## Monte Carlo
 
@@ -171,7 +171,7 @@ Revenue in the final year by stream:
 
 | P10 | P50 | P90 | P(NPV > 0) |
 |---|---|---|---|
-| -$460.3M | -$50.0M | $454.5M | 44% |
+| -$288.1M | $294.2M | $1.11B | 71% |
 
 ![Monte Carlo](monte_carlo.png)
 
@@ -186,7 +186,7 @@ Revenue in the final year by stream:
 | NOAK margin on build-to-rent homes | 0.15 fraction | 0.10 | yes |
 | Assembled joint tolerance vs no-rework tolerance (prototype test) | 3.00 mm (<= to win) | 3.00 | yes |
 | Revenue at full scale vs big-enough line | 2.02 x | 1.00 | yes |
-| Probability NPV > 0 | 44% | 50% | no |
+| Probability NPV > 0 | 71% | 50% | yes |
 
 ## Scorecard
 
@@ -197,19 +197,20 @@ Economics is scored from P(NPV > 0); the rest are judgment scores set in the inp
 | impact | 20% | 4 |
 | breakthrough | 20% | 3 |
 | feasibility | 15% | 3 |
-| economics | 15% | 3 |
+| economics | 15% | 4 |
 | scalability | 10% | 4 |
 | demand | 10% | 4 |
 | white space | 5% | 2 |
 | validation | 5% | 2 |
-| **Weighted total** | | **3.30** |
+| **Weighted total** | | **3.45** |
 
 ## Notes
 
 - Market check: year-15 output is 6,300 homes/yr, vs ~30,000 modular + panelized homes built in the US in 2025 (3% of single-family).
 - Energy package by region: each region gets the package that saves the owner most once it is financed in the mortgage, or none. Backup-power value is not counted.
 - Cost multipliers are relative to the site-built construction cost (NAHB 2024: $162/sq ft); 'Cost vs incumbent' in the cash flow includes transport and set.
-- Operating profit is before depreciation; factory capex is a separate cash outflow. No taxes, working capital or terminal value.
+- Operating profit is before depreciation; factory capex is a separate cash outflow. Pre-tax, no working capital.
+- NPV includes the remaining life of factories built within the horizon (no new factories after it) while cash stays positive; 14 tail years counted. NPV over the 15-yr horizon alone: $360M.
 - Federal 45L and 25D credits ended in 2026, so no subsidies are counted.
 - Build-to-rent: proposed federal limits on institutional home buyers could shrink this market; not modeled.
 - Site system: an adjustable foundation must still meet frost-depth or engineered-foundation rules and count as a 'permanent foundation' for lenders and appraisers; not modeled.

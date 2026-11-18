@@ -33,9 +33,10 @@ forklift-set components that lock together with almost no onsite finishing.
 
 | Metric | Value |
 |---|---|
-| NPV (10%, 15 yr) | $361M |
-| IRR | 28% |
-| P(NPV > 0), Monte Carlo | 43% |
+| NPV (10%), incl. remaining factory life | $876M |
+| NPV over the 15-yr horizon only | $360M |
+| IRR | 32% |
+| P(NPV > 0), Monte Carlo | 71% |
 | Peak cash need | $237M |
 | Cash breakeven | year 10 |
 | Year-15 revenue | $2.02B (about 6,300 homes/yr from 33 factories) |
@@ -50,9 +51,9 @@ the buyer about $8,500 of rent or double payments vs modular.
 
 | Scenario | NPV |
 |---|---|
-| Conventional site work and crane set | $85M |
-| Site system, but assembled joints miss the no-rework tolerance | $309M |
-| Site system working (base) | $361M |
+| Conventional site work and crane set | $396M |
+| Site system, but assembled joints miss the no-rework tolerance | $784M |
+| Site system working (base) | $876M |
 
 Most of the gain comes from the foundation and the forklift set. The joint-tolerance
 kill metric (assembled joints within ~3 mm, to be proven in a prototype) protects
@@ -60,11 +61,11 @@ the finishing savings and the extra month of speed.
 
 **What decides it** (break-evens for NPV = 0):
 
-- Factory capex at most $37M per 250-home/yr plant.
-- Utilization at least 45%. Katerra and Veev failed on demand and overhead, not on robots.
-- Price discount vs modular at most 14%.
+- Factory capex at most $75M per 250-home/yr plant.
+- Utilization at least 33%. Katerra and Veev failed on demand and overhead, not on robots.
+- Price discount vs modular at most 18.5%.
 - Tornado leaders: factory capacity, factory capex, price discount, and how many homes it takes to reach NOAK.
-- The Monte Carlo median is still negative (P50 −$49M): the base case sits near the optimistic end of the factory-capex and learning ranges.
+- Monte Carlo P10 / P50 / P90: −$288M / $294M / $1.11B.
 
 ## Build-to-rent offtake (scenario)
 
@@ -74,15 +75,15 @@ starts were 68,000 in 2025 (NAHB), so our ~2,000 homes/yr would be about 3% of i
 
 | Scenario | NPV |
 |---|---|
-| Retail only (base) | $361M |
-| + build-to-rent at 7% discount | $352M |
-| + build-to-rent at 3% discount | $404M |
-| Weak retail demand (60% fill), retail only | $153M |
-| Weak retail demand (60% fill), + build-to-rent | $197M |
+| Retail only (base) | $876M |
+| + build-to-rent at 7% discount | $871M |
+| + build-to-rent at 3% discount | $955M |
+| Weak retail demand (60% fill), retail only | $503M |
+| Weak retail demand (60% fill), + build-to-rent | $592M |
 
 Build-to-rent is insurance, not profit: at a 7% discount it beats retail-only only
-when retail demand fills less than ~77% of the line, or when the discount is under
-~6%. It lowers the utilization needed for NPV = 0 from 45% to 35%. The anchor
+when retail demand fills less than ~79% of the line. It lowers the utilization
+needed for NPV = 0 from 33% to 18%. The anchor
 contracts could also speed each new factory's ramp, which is not credited here.
 Policy risk: proposed federal limits on institutional home buyers could shrink
 this market.
@@ -101,17 +102,17 @@ mortgage (no federal credit), or none.
 | Mountain / Midwest (cheap power, net billing) | 25% | −$359/yr | −$927/yr | none |
 
 The package fits best where the fewest new homes are built. It adds only about
-$13M of NPV. Backup-power value is not counted.
+$22M of NPV. Backup-power value is not counted.
 
 ## Revenue add-ons (NPV, modeled)
 
 | Scenario | NPV |
 |---|---|
-| Homes only | $346M |
-| Base (regional energy + VPP + service) | $361M |
-| Base + panels sold to other builders | $386M |
-| Base + ADU line | $415M |
-| All add-ons | $440M |
+| Homes only | $850M |
+| Base (regional energy + VPP + service) | $876M |
+| Base + panels sold to other builders | $917M |
+| Base + ADU line | $968M |
+| All add-ons | $1.01B |
 
 **Not yet modeled, worth testing next:** mortgage origination, factory software licensing, disaster-rebuild
 contracts, wildfire-hardened homes with insurer partnerships, and climate-specific
@@ -119,7 +120,9 @@ variants.
 
 ## Caveats
 
-- Pre-tax, real 2026 USD; no depreciation, working capital or terminal value.
+- Pre-tax, real 2026 USD; no depreciation or working capital. NPV counts the remaining
+  life of factories built within the horizon (no new factories after it) while cash stays
+  positive, the same rule used in the thermosyphon and SAF TEAs.
 - Costs are benchmarked to NAHB 2024 site-built construction cost ($162/sq ft); NOAK reductions are targets, not measured.
 - Federal 45L and 25D credits ended in 2026 and are not counted.
 - Solar self-use share (60%) and battery cycling are assumptions, not an hourly load model.
@@ -136,3 +139,9 @@ scripts/run_tea.py
 results/prefab_homes/   summary.md, cashflow.csv, sensitivity.csv, tornado.png, monte_carlo.png
 docs/framework.md
 ```
+
+## Consistency audit (Nov 2026)
+
+- Shared remaining-life rule with the thermosyphon and SAF TEAs: after the 15-year horizon, factories already built run out their 15-year life with no new builds, counted only while cash stays positive. Horizon-only NPV is still reported in `results/prefab_homes/summary.md`.
+- Synced the shared framework (capex column, extra tables, include-aware `run_tea.py`).
+- Already consistent: 10% real discount rate, 3% G&A, pre-tax, $1B big-enough line, 2,000 Monte Carlo draws.

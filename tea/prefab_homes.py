@@ -220,21 +220,31 @@ def run(v) -> StandardResult:
     p_btr = p_sqft * (1 - v["btr.price_discount"])
 
     experience = v["learning.first_year_experience"]
-    prev_factories = 0
+    build_years: list[int] = []
+    life = int(v["factory.life"])
+    tail: list[float] = []
+    tail_open = True
     cum_retail_units = 0.0
     cumulative = 0.0
     learning_investment = 0.0
     noak_year = None
     rows: list[YearRow] = []
 
-    for t in range(1, horizon + 1):
+    # Years after the horizon count the remaining life of factories already built (same rule in all
+    # three finalist TEAs): no new factories, factories retire at end of life, stop when cash turns negative.
+    for t in range(1, horizon + life + 1):
+        if t > horizon and not tail_open:
+            break
         k = t - rd
         streams = {s: 0.0 for s in ("homes", "btr", "adus", "energy", "vpp", "service", "panels")}
         capex = 0.0
-        if k >= 1:
+        active = sum(1 for b in build_years if t - b < life)
+        if k >= 1 and (t <= horizon or active > 0):
             phase = "commercial"
-            factories = sched[min(k, len(sched)) - 1]
-            new = max(factories - prev_factories, 0)
+            target = sched[min(k, len(sched)) - 1] if t <= horizon else active
+            new = max(target - active, 0)
+            build_years += [t] * new
+            factories = active + new
             capex = new * v["factory.capex"]
             c = v["factory.capacity"]
             # Contracted BTR volume fills its share of each line first; retail fills the rest at the retail rate.
@@ -243,7 +253,6 @@ def run(v) -> StandardResult:
             btr = min(mature * btr_share + min(new * c * btr_share, new_total), btr_cap, cap)
             retail = mature * (1 - btr_share) * v["factory.utilization"] + max(new_total - new * c * btr_share, 0.0)
             retail = min(retail, max(cap - btr, 0.0))
-            prev_factories = factories
         else:
             phase, factories, btr, retail = "R&D", 0, 0.0, 0.0
         slots = btr + retail
@@ -279,8 +288,15 @@ def run(v) -> StandardResult:
         gross = revenue - cos
         opex = v["company.rd_opex"] if phase == "R&D" else v["company.corporate_opex"] + revenue * v["company.ga_share"]
         ebit = gross - opex
+        if t > horizon:
+            if ebit - capex > 0:
+                tail.append(ebit - capex)
+            else:
+                tail_open = False
+            continue
         cumulative += ebit - capex
         rows.append(YearRow(t, phase, revenue, cos, gross, opex, ebit, cumulative, idx, streams, capex))
+        final_homes = units
 
         experience += slots  # home-equivalents of line time
         cum_retail_units += houses + adus
@@ -288,8 +304,8 @@ def run(v) -> StandardResult:
         if noak_year is None and experience >= v["learning.noak_experience"]:
             noak_year = t
 
-    final_homes = units
     cash = [r.ebit - r.capex for r in rows]
+    npv_horizon = npv(rate, cash)
     went_negative, breakeven_year = False, None
     for r in rows:
         if r.cumulative_cash < 0:
@@ -329,8 +345,8 @@ def run(v) -> StandardResult:
     return StandardResult(
         project="Automated factories for electrified prefab homes",
         years=rows,
-        npv=npv(rate, cash),
-        irr=irr(cash),
+        npv=npv(rate, cash + tail),
+        irr=irr(cash + tail),
         peak_cash_need=-min(0.0, min(r.cumulative_cash for r in rows)),
         breakeven_year=breakeven_year,
         full_scale_revenue=rows[-1].revenue,
@@ -344,7 +360,9 @@ def run(v) -> StandardResult:
             f"Market check: year-{horizon} output is {final_homes:,.0f} homes/yr, vs ~30,000 modular + panelized homes built in the US in 2025 (3% of single-family).",
             "Energy package by region: each region gets the package that saves the owner most once it is financed in the mortgage, or none. Backup-power value is not counted.",
             "Cost multipliers are relative to the site-built construction cost (NAHB 2024: $162/sq ft); 'Cost vs incumbent' in the cash flow includes transport and set.",
-            "Operating profit is before depreciation; factory capex is a separate cash outflow. No taxes, working capital or terminal value.",
+            "Operating profit is before depreciation; factory capex is a separate cash outflow. Pre-tax, no working capital.",
+            f"NPV includes the remaining life of factories built within the horizon (no new factories after it) "
+            f"while cash stays positive; {len(tail)} tail years counted. NPV over the {horizon}-yr horizon alone: ${npv_horizon / 1e6:,.0f}M.",
             "Federal 45L and 25D credits ended in 2026, so no subsidies are counted.",
             "Build-to-rent: proposed federal limits on institutional home buyers could shrink this market; not modeled.",
             "Site system: an adjustable foundation must still meet frost-depth or engineered-foundation rules and count as a 'permanent foundation' for lenders and appraisers; not modeled.",

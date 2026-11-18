@@ -366,6 +366,51 @@ high = 0.06
 unit = "fraction of revenue"
 source = "Assumption. NAHB 2024 builder overhead and general expense is 5.7% of price; part of that sits in factory fixed opex here."
 
+# --- Build-to-rent offtake (scenario; off in base) ------------------------------
+# Rental operators sign volume contracts that fill part of each factory's line,
+# at a bulk discount and with almost no selling cost. Retail buyers fill the rest
+# at the retail utilization rate. BTR homes get no energy package or service plan.
+
+[btr.enabled]
+base = 0
+unit = "1 = on"
+source = "Off in base: at a 7% discount it only pays when retail demand fills less than ~77% of the line."
+
+[btr.share_of_capacity]
+base = 0.25
+low = 0.10
+high = 0.40
+unit = "share of each mature factory's line under contract"
+source = "Assumption"
+
+[btr.price_discount]
+base = 0.07
+low = 0.03
+high = 0.15
+unit = "fraction below our retail price"
+source = "Assumption: bulk buyers negotiate volume pricing"
+
+[btr.selling_cost]
+base = 0.01
+low = 0.005
+high = 0.02
+unit = "fraction of BTR revenue"
+source = "Assumption: no sales commissions or model homes"
+
+[btr.market_starts]
+base = 68000
+low = 50000
+high = 90000
+unit = "single-family built-for-rent starts/yr"
+source = "NAHB: 68,000 single-family built-for-rent starts in 2025, down 19% from 84,000 in 2024"
+
+[btr.max_share]
+base = 0.10
+low = 0.05
+high = 0.20
+unit = "most of the BTR market we can win"
+source = "Assumption"
+
 # --- Energy package (factory-installed solar and battery) -------------------
 
 [energy.enabled]

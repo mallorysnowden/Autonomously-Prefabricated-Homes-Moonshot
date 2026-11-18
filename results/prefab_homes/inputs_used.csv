@@ -66,6 +66,12 @@ company.selling_cost,0.036,0.02,0.06,fraction of home revenue,NAHB 2024: sales c
 company.construction_financing,0.015,0.01,0.025,fraction of price for a site-built schedule,NAHB 2024: financing 1.5% of price. Scaled by our build months / site-built months.
 company.warranty,0.01,0.005,0.03,fraction of home revenue,Assumption
 company.ga_share,0.03,0.02,0.06,fraction of revenue,Assumption. NAHB 2024 builder overhead and general expense is 5.7% of price; part of that sits in factory fixed opex here.
+btr.enabled,0,,,1 = on,Off in base: at a 7% discount it only pays when retail demand fills less than ~77% of the line.
+btr.share_of_capacity,0.25,0.1,0.4,share of each mature factory's line under contract,Assumption
+btr.price_discount,0.07,0.03,0.15,fraction below our retail price,Assumption: bulk buyers negotiate volume pricing
+btr.selling_cost,0.01,0.005,0.02,fraction of BTR revenue,Assumption: no sales commissions or model homes
+btr.market_starts,68000,50000,90000,single-family built-for-rent starts/yr,"NAHB: 68,000 single-family built-for-rent starts in 2025, down 19% from 84,000 in 2024"
+btr.max_share,0.1,0.05,0.2,most of the BTR market we can win,Assumption
 energy.enabled,1,,,1 = offered,Product as specified: onsite solar + storage
 energy.take_rate,0.6,0.3,0.9,share of buyers,Assumption
 energy.solar_kw,6,,,kW per home,"Assumption: sized for an efficient 1,800 sq ft all-electric home"

@@ -14,7 +14,7 @@
 |---|---|
 | NPV | $360.5M |
 | IRR | 28% |
-| Probability NPV > 0 (Monte Carlo) | 43% |
+| Probability NPV > 0 (Monte Carlo) | 44% |
 | Peak cash need | $237.2M |
 | Cash breakeven year | 10 |
 | Revenue in final year | $2.02B |
@@ -29,6 +29,7 @@
 | Option | Value | vs ours |
 |---|---|---|
 | Ours at NOAK price | $175 | 1.00x |
+| Ours to build-to-rent buyers | $163 | 0.93x |
 | Conventional modular | $184 | 1.05x |
 | Site-built | $217 | 1.24x |
 | Manufactured (HUD code, reference) | $87 | 0.50x |
@@ -128,6 +129,10 @@ Revenue in the final year by stream:
 
 | Scenario | NPV | Final-year revenue | Peak cash need |
 |---|---|---|---|
+| With build-to-rent offtake (25% of line, 7% discount) | $351.7M | $2.08B | $249.0M |
+| With build-to-rent offtake at a 3% discount | $403.9M | $2.11B | $232.7M |
+| Weak retail demand (60% fill), no build-to-rent | $153.3M | $1.54B | $262.0M |
+| Weak retail demand (60% fill), with build-to-rent | $197.4M | $1.72B | $269.0M |
 | Conventional site work and crane set (no site system) | $85.1M | $2.02B | $282.7M |
 | Site system, but joints miss tolerance | $308.7M | $2.02B | $243.1M |
 | Homes only (no add-ons) | $346.1M | $1.99B | $240.8M |
@@ -166,7 +171,7 @@ Revenue in the final year by stream:
 
 | P10 | P50 | P90 | P(NPV > 0) |
 |---|---|---|---|
-| -$448.4M | -$49.2M | $483.0M | 43% |
+| -$460.3M | -$50.0M | $454.5M | 44% |
 
 ![Monte Carlo](monte_carlo.png)
 
@@ -178,9 +183,10 @@ Revenue in the final year by stream:
 | Time to occupancy vs conventional modular | 0.51 x (<1 to win) | 1.00 | yes |
 | NOAK construction cost vs site-built (incl. transport) | 0.76 x (<=0.85 to win) | 0.85 | yes |
 | NOAK margin on homes after overhead, capex, selling, warranty, G&A and financing | 0.19 fraction | 0.10 | yes |
+| NOAK margin on build-to-rent homes | 0.15 fraction | 0.10 | yes |
 | Assembled joint tolerance vs no-rework tolerance (prototype test) | 3.00 mm (<= to win) | 3.00 | yes |
 | Revenue at full scale vs big-enough line | 2.02 x | 1.00 | yes |
-| Probability NPV > 0 | 43% | 50% | no |
+| Probability NPV > 0 | 44% | 50% | no |
 
 ## Scorecard
 
@@ -205,5 +211,6 @@ Economics is scored from P(NPV > 0); the rest are judgment scores set in the inp
 - Cost multipliers are relative to the site-built construction cost (NAHB 2024: $162/sq ft); 'Cost vs incumbent' in the cash flow includes transport and set.
 - Operating profit is before depreciation; factory capex is a separate cash outflow. No taxes, working capital or terminal value.
 - Federal 45L and 25D credits ended in 2026, so no subsidies are counted.
+- Build-to-rent: proposed federal limits on institutional home buyers could shrink this market; not modeled.
 - Site system: an adjustable foundation must still meet frost-depth or engineered-foundation rules and count as a 'permanent foundation' for lenders and appraisers; not modeled.
 

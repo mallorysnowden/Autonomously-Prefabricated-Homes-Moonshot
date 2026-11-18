@@ -140,17 +140,24 @@ def factory_overhead_per_sqft(v) -> float:
     return annual / sqft
 
 
+def noak_full_cost(v, selling_cost: float) -> float:
+    """$/sq ft at which a home just covers NOAK cost, factory overhead and capex, selling, warranty, G&A and financing."""
+    v = apply_site_system(v)
+    direct = v["bench.site_built_cost_per_sqft"] * noak_index(v) + factory_overhead_per_sqft(v) - v["owner.gas_line_avoided"] / v["home.sqft"]
+    return direct / (1 - selling_cost - v["company.warranty"] - v["company.ga_share"] - financing_share(v))
+
+
 def functional_units(v) -> list[FunctionalUnit]:
     v = apply_site_system(v)
     site_cost = v["bench.site_built_cost_per_sqft"]
     p_ours = price_per_sqft(v)
     p_mod = v["bench.site_built_price_per_sqft"] * (1 - v["bench.modular_discount"])
     p_site = v["bench.site_built_price_per_sqft"]
-    full_cost = (site_cost * noak_index(v) + factory_overhead_per_sqft(v)
-                 - v["owner.gas_line_avoided"] / v["home.sqft"]) / (1 - v["company.selling_cost"] - v["company.warranty"] - v["company.ga_share"] - financing_share(v))
+    full_cost = noak_full_cost(v, v["company.selling_cost"])
     price = FunctionalUnit(
         "Installed home, excluding land", "$/sq ft",
-        {"Ours at NOAK price": p_ours, "Conventional modular": p_mod, "Site-built": p_site,
+        {"Ours at NOAK price": p_ours, "Ours to build-to-rent buyers": p_ours * (1 - v["btr.price_discount"]),
+         "Conventional modular": p_mod, "Site-built": p_site,
          "Manufactured (HUD code, reference)": v["bench.manufactured_price_per_sqft"],
          "Ours priced at NOAK full cost": full_cost},
         "Full cost includes factory overhead, capex, selling, warranty, G&A and construction financing at full utilization.",
@@ -208,10 +215,13 @@ def run(v) -> StandardResult:
     cum_vpp_kw_value = 0.0  # sum over battery homes of kW x regional $/kW-yr
     cap = v["market.single_family_completions"] * v["market.max_share"]  # factory slots (home-equivalents)
     adu_share = v["adu.share_of_units"] * v["adu.enabled"]
+    btr_share = v["btr.share_of_capacity"] * v["btr.enabled"]
+    btr_cap = v["btr.market_starts"] * v["btr.max_share"] * v["btr.enabled"]
+    p_btr = p_sqft * (1 - v["btr.price_discount"])
 
     experience = v["learning.first_year_experience"]
     prev_factories = 0
-    cum_units = 0.0
+    cum_retail_units = 0.0
     cumulative = 0.0
     learning_investment = 0.0
     noak_year = None
@@ -219,41 +229,49 @@ def run(v) -> StandardResult:
 
     for t in range(1, horizon + 1):
         k = t - rd
-        streams = {s: 0.0 for s in ("homes", "adus", "energy", "vpp", "service", "panels")}
+        streams = {s: 0.0 for s in ("homes", "btr", "adus", "energy", "vpp", "service", "panels")}
         capex = 0.0
         if k >= 1:
             phase = "commercial"
             factories = sched[min(k, len(sched)) - 1]
             new = max(factories - prev_factories, 0)
             capex = new * v["factory.capex"]
-            slots = v["factory.capacity"] * ((factories - new) * v["factory.utilization"] + new * v["factory.first_year_utilization"])
-            slots = min(slots, cap)
+            c = v["factory.capacity"]
+            # Contracted BTR volume fills its share of each line first; retail fills the rest at the retail rate.
+            # New factories are limited by their production ramp (first-year utilization).
+            mature, new_total = (factories - new) * c, new * c * v["factory.first_year_utilization"]
+            btr = min(mature * btr_share + min(new * c * btr_share, new_total), btr_cap, cap)
+            retail = mature * (1 - btr_share) * v["factory.utilization"] + max(new_total - new * c * btr_share, 0.0)
+            retail = min(retail, max(cap - btr, 0.0))
             prev_factories = factories
         else:
-            phase, factories, slots = "R&D", 0, 0.0
+            phase, factories, btr, retail = "R&D", 0, 0.0, 0.0
+        slots = btr + retail
 
-        houses = slots * (1 - adu_share)
-        adus = slots * adu_share / v["adu.slot_fraction"]
-        units = houses + adus
+        houses = retail * (1 - adu_share)
+        adus = retail * adu_share / v["adu.slot_fraction"]
+        units = btr + houses + adus
         idx = cost_index(v, experience)
         house_cost_sqft = site_cost * idx
-        house_cogs = houses * (v["home.sqft"] * house_cost_sqft - v["owner.gas_line_avoided"])
+        house_cogs = (houses + btr) * (v["home.sqft"] * house_cost_sqft - v["owner.gas_line_avoided"])
         adu_cogs = adus * v["adu.sqft"] * house_cost_sqft * v["adu.cost_premium"]
-        learning_investment += (houses * v["home.sqft"] + adus * v["adu.sqft"] * v["adu.cost_premium"]) * site_cost * (idx - noak_index(v))
+        learning_investment += ((houses + btr) * v["home.sqft"] + adus * v["adu.sqft"] * v["adu.cost_premium"]) * site_cost * (idx - noak_index(v))
 
         energy_homes = {r: houses * shares[r] * v["energy.take_rate"] * (offer[r] != "none") for r in REGIONS}
         battery_homes = {r: energy_homes[r] * (offer[r] == "solar + battery") for r in REGIONS}
         streams["homes"] = houses * v["home.sqft"] * p_sqft
+        streams["btr"] = btr * v["home.sqft"] * p_btr
         streams["adus"] = adus * v["adu.sqft"] * v["adu.price_per_sqft"]
         streams["energy"] = sum(energy_homes[r] * pkg[r][0] for r in REGIONS)
         streams["vpp"] = cum_vpp_kw_value * v["vpp.enabled"] * v["vpp.enrollment"] * v["vpp.our_share"]
-        streams["service"] = cum_units * v["service.enabled"] * v["service.attach"] * v["service.fee_per_year"]
+        streams["service"] = cum_retail_units * v["service.enabled"] * v["service.attach"] * v["service.fee_per_year"]
         streams["panels"] = factories * v["panels.enabled"] * v["panels.revenue_per_factory"]
 
         product_rev = streams["homes"] + streams["adus"] + streams["energy"]
         cos = (house_cogs + adu_cogs + sum(energy_homes[r] * pkg[r][1] for r in REGIONS)
                + product_rev * (v["company.selling_cost"] + v["company.warranty"])
-               + (streams["homes"] + streams["adus"]) * financing_share(v)
+               + streams["btr"] * (v["btr.selling_cost"] + v["company.warranty"])
+               + (streams["homes"] + streams["btr"] + streams["adus"]) * financing_share(v)
                + streams["service"] * (1 - v["service.margin"])
                + streams["panels"] * (1 - v["panels.margin"])
                + factories * v["factory.fixed_opex"])
@@ -265,12 +283,12 @@ def run(v) -> StandardResult:
         rows.append(YearRow(t, phase, revenue, cos, gross, opex, ebit, cumulative, idx, streams, capex))
 
         experience += slots  # home-equivalents of line time
-        cum_units += units
+        cum_retail_units += houses + adus
         cum_vpp_kw_value += sum(battery_homes[r] * v["vpp.kw_per_home"] * v[f"region_{r}.vpp_payment"] for r in REGIONS)
         if noak_year is None and experience >= v["learning.noak_experience"]:
             noak_year = t
 
-    final_homes = houses + adus
+    final_homes = units
     cash = [r.ebit - r.capex for r in rows]
     went_negative, breakeven_year = False, None
     for r in rows:
@@ -285,6 +303,7 @@ def run(v) -> StandardResult:
     full_cost = price_fu["Ours priced at NOAK full cost"]
     margin = 1 - full_cost / price_fu["Ours at NOAK price"]
     site_on = bool(v.get("site_system.applied"))
+    btr_margin = 1 - noak_full_cost(v, v["btr.selling_cost"]) / price_fu["Ours to build-to-rent buyers"]
     big = v["scale.big_enough_revenue"]
     kills = [
         KillMetric("NOAK full cost vs conventional-modular price", full_cost / price_fu["Conventional modular"], 1.0,
@@ -297,6 +316,8 @@ def run(v) -> StandardResult:
                    noak_idx <= 0.85, "Must beat modular's typical ~15% advantage at the cost level"),
         KillMetric("NOAK margin on homes after overhead, capex, selling, warranty, G&A and financing", margin, 0.10, "fraction",
                    margin >= 0.10, "10% threshold is a judgment (site-built builders averaged 11% in 2024)"),
+        KillMetric("NOAK margin on build-to-rent homes", btr_margin, 0.10, "fraction", (not v["btr.enabled"]) or btr_margin >= 0.10,
+                   "10% threshold is a judgment; BTR trades price for guaranteed volume" if v["btr.enabled"] else "BTR off in base; margin shown if switched on"),
         KillMetric("Assembled joint tolerance vs no-rework tolerance (prototype test)",
                    v["site_system.joint_tolerance_mm"], v["site_system.tolerance_needed_mm"], "mm (<= to win)",
                    (not site_on) or joints_ok(v),
@@ -325,6 +346,7 @@ def run(v) -> StandardResult:
             "Cost multipliers are relative to the site-built construction cost (NAHB 2024: $162/sq ft); 'Cost vs incumbent' in the cash flow includes transport and set.",
             "Operating profit is before depreciation; factory capex is a separate cash outflow. No taxes, working capital or terminal value.",
             "Federal 45L and 25D credits ended in 2026, so no subsidies are counted.",
+            "Build-to-rent: proposed federal limits on institutional home buyers could shrink this market; not modeled.",
             "Site system: an adjustable foundation must still meet frost-depth or engineered-foundation rules and count as a 'permanent foundation' for lenders and appraisers; not modeled.",
         ],
     )
@@ -348,6 +370,10 @@ def scenarios(v) -> list[tuple[str, dict]]:
     """Revenue add-ons, each switched on or off against the base case."""
     core = {"energy.enabled": 0, "vpp.enabled": 0, "service.enabled": 0, "panels.enabled": 0, "adu.enabled": 0}
     return [
+        ("With build-to-rent offtake (25% of line, 7% discount)", {"btr.enabled": 1}),
+        ("With build-to-rent offtake at a 3% discount", {"btr.enabled": 1, "btr.price_discount": 0.03}),
+        ("Weak retail demand (60% fill), no build-to-rent", {"factory.utilization": 0.60}),
+        ("Weak retail demand (60% fill), with build-to-rent", {"btr.enabled": 1, "factory.utilization": 0.60}),
         ("Conventional site work and crane set (no site system)", {"site_system.enabled": 0}),
         ("Site system, but joints miss tolerance", {"site_system.joint_tolerance_mm": 6.0}),
         ("Homes only (no add-ons)", core),

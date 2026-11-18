@@ -28,47 +28,69 @@ or is marked "Assumption").
 
 ## Results (base case)
 
+The base case includes the **site system**: a self-leveling foundation and
+forklift-set components that lock together with almost no onsite finishing.
+
 | Metric | Value |
 |---|---|
-| NPV (10%, 15 yr) | $147M |
-| IRR | 19% |
-| P(NPV > 0), Monte Carlo | 26% |
-| Peak cash need | $266M |
-| Cash breakeven | year 11 |
-| Year-15 revenue | $2.09B (about 6,300 homes/yr from 33 factories) |
-| Extra cost paid while learning | $255M |
+| NPV (10%, 15 yr) | $361M |
+| IRR | 28% |
+| P(NPV > 0), Monte Carlo | 43% |
+| Peak cash need | $237M |
+| Cash breakeven | year 10 |
+| Year-15 revenue | $2.02B (about 6,300 homes/yr from 33 factories) |
+| Extra cost paid while learning | $296M |
 
-**Versus incumbents ($/sq ft, excluding land):** ours $175 price and $156 NOAK
-full cost; conventional modular $184; site-built $217. Permit to occupancy:
-4.5 months, against 6.9 for modular and 8.8 for site-built.
+**Versus incumbents ($/sq ft, excluding land):** ours $175 price and $143 NOAK
+full cost (19% margin); conventional modular $184; site-built $217. Permit to
+occupancy: 3.5 months, against 6.9 for modular and 8.8 for site-built, which saves
+the buyer about $8,500 of rent or double payments vs modular.
 
-All five kill metrics pass at base. The weak point is the probability: the base
-case sits near the optimistic end of several ranges (factory capex, learning
-volume), so the Monte Carlo median is negative (P50 −$214M).
+**Where the breakthrough sits**
+
+| Scenario | NPV |
+|---|---|
+| Conventional site work and crane set | $85M |
+| Site system, but assembled joints miss the no-rework tolerance | $309M |
+| Site system working (base) | $361M |
+
+Most of the gain comes from the foundation and the forklift set. The joint-tolerance
+kill metric (assembled joints within ~3 mm, to be proven in a prototype) protects
+the finishing savings and the extra month of speed.
 
 **What decides it** (break-evens for NPV = 0):
 
-- Factory capex at most $21M per 250-home/yr plant. Reframe-style microfactories (<$5M equipment, company-reported) pass; $40–60M ground-up plants fail.
-- Utilization at least 61%. Katerra and Veev failed on demand and overhead, not on robots.
-- Price discount vs modular at most 8.8%.
-- MEP cost reduction at least 4% (base 25%).
-- Tornado leaders: factory capacity, factory capex, price discount, the modular discount benchmark, and how many homes it takes to reach NOAK.
+- Factory capex at most $37M per 250-home/yr plant.
+- Utilization at least 45%. Katerra and Veev failed on demand and overhead, not on robots.
+- Price discount vs modular at most 14%.
+- Tornado leaders: factory capacity, factory capex, price discount, and how many homes it takes to reach NOAK.
+- The Monte Carlo median is still negative (P50 −$49M): the base case sits near the optimistic end of the factory-capex and learning ranges.
+
+## Energy package by region
+
+Each region gets the package that saves the owner most once it is financed in the
+mortgage (no federal credit), or none.
+
+| Region | Share of sales | Owner gain, solar only | Owner gain, solar + battery | Offered |
+|---|---|---|---|---|
+| CA / HI (net billing) | 8% | $887/yr | $1,145/yr | solar + battery |
+| New England / NY (net metering, battery programs) | 5% | $921/yr | $707/yr | solar |
+| Southeast (full net metering) | 35% | $156/yr | −$671/yr | solar |
+| Texas-style buyback | 27% | −$61/yr | −$408/yr | none |
+| Mountain / Midwest (cheap power, net billing) | 25% | −$359/yr | −$927/yr | none |
+
+The package fits best where the fewest new homes are built. It adds only about
+$13M of NPV. Backup-power value is not counted.
 
 ## Revenue add-ons (NPV, modeled)
 
 | Scenario | NPV |
 |---|---|
-| Homes only | $101M |
-| + solar + battery package | $144M |
-| + VPP aggregation share | $146M |
-| Base (energy + VPP + service) | $147M |
-| Base + panels sold to other builders | $173M |
-| Base + ADU line | $196M |
-| All add-ons | $221M |
-
-The energy package earns the company margin, but owners only come out ahead
-above about $0.215/kWh (base $0.165, US average). In high-rate states like
-California it pays. VPP and service subscriptions are small at this scale.
+| Homes only | $346M |
+| Base (regional energy + VPP + service) | $361M |
+| Base + panels sold to other builders | $386M |
+| Base + ADU line | $415M |
+| All add-ons | $440M |
 
 **Not yet modeled, worth testing next:** build-to-rent offtake contracts (fixes
 utilization), mortgage origination, factory software licensing, disaster-rebuild
@@ -80,7 +102,9 @@ variants.
 - Pre-tax, real 2026 USD; no depreciation, working capital or terminal value.
 - Costs are benchmarked to NAHB 2024 site-built construction cost ($162/sq ft); NOAK reductions are targets, not measured.
 - Federal 45L and 25D credits ended in 2026 and are not counted.
-- Solar output is valued at the retail rate, which flatters the package under net billing.
+- Solar self-use share (60%) and battery cycling are assumptions, not an hourly load model.
+- An adjustable foundation must still meet frost-depth or engineered-foundation rules and qualify as a "permanent foundation" for mortgages; not modeled.
+- Construction financing is 1.5% of price on a site-built schedule (NAHB 2024), scaled to our build time.
 
 ## Layout
 

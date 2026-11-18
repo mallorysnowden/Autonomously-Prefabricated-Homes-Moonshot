@@ -9,7 +9,7 @@
 [meta]
 project = "Automated factories for electrified prefab homes"
 boundary = "Design, factory build, transport, set and finish a single-family home, plus energy and service add-ons. Excludes land and lot development."
-functional_units = "Installed price per sq ft excluding land; months from permit to occupancy; owner's annual cost of home plus energy."
+functional_units = "Installed price per sq ft excluding land; months from permit to occupancy; buyer's cost of waiting; owner's annual cost of home plus energy."
 
 # --- Home and benchmarks -----------------------------------------------------
 
@@ -189,6 +189,75 @@ high = 20000
 unit = "cumulative homes at which NOAK costs are reached"
 source = "Assumption: definition of NOAK for this project"
 
+# --- Site system (base case): self-leveling foundation + forklift-set components --------
+# Overrides the conventional site, final-stage and transport/set inputs above when enabled.
+# The breakthrough claim: forklift-sized pieces that self-level on the foundation and lock
+# together tightly enough to need almost no onsite finishing.
+
+[site_system.enabled]
+base = 1
+unit = "1 = on"
+source = "Base case. Set to 0 for conventional site work and crane set."
+
+[site_system.foundation_share]
+base = 0.58
+unit = "foundation share of site + foundation cost"
+source = "NAHB 2024: foundations 10.5% and site work 7.6% of construction cost"
+
+[site_system.foundation_reduction]
+base = 0.40
+low = 0.15
+high = 0.60
+unit = "fraction vs poured foundation"
+source = "Assumption: factory-made adjustable foundation on helical piles or precast pads, no curing time"
+
+[site_system.sitework_reduction]
+base = 0.10
+low = 0.0
+high = 0.25
+unit = "fraction vs conventional site work"
+source = "Assumption: less grading for a leveling foundation; utilities and driveway unchanged"
+
+[site_system.set_cost]
+base = 0.035
+low = 0.02
+high = 0.06
+unit = "fraction of site-built construction cost"
+source = "Assumption: forklift or telehandler set instead of a crane; conventional modular is 0.06 above"
+
+[site_system.final_reduction]
+base = 0.30
+low = 0.10
+high = 0.45
+unit = "fraction vs conventional final stage"
+source = "Assumption: plug-in plumbing and electrical couplings and pre-finished joints"
+
+[site_system.learning_rate]
+base = 0.10
+low = 0.05
+high = 0.15
+unit = "per doubling, for site and final stage"
+source = "Assumption: new hardware learns like MEP and finishes (0.10), not like conventional site work (0.03)"
+
+[site_system.our_months]
+base = 3.5
+low = 2.5
+high = 5.0
+unit = "months from permit to occupancy"
+source = "Target. Includes ~1.4 months permit to start (Census 2025)."
+
+[site_system.joint_tolerance_mm]
+base = 3.0
+low = 1.5
+high = 6.0
+unit = "mm, assembled joint tolerance achieved"
+source = "Target to prove in a prototype (no data yet)"
+
+[site_system.tolerance_needed_mm]
+base = 3.0
+unit = "mm, tolerance at which joints need no finishing rework"
+source = "Assumption: about 1/8 inch, finish-carpentry level"
+
 # --- Factories ----------------------------------------------------------------
 
 [factory.capex]
@@ -276,6 +345,13 @@ high = 0.06
 unit = "fraction of home revenue"
 source = "NAHB 2024: sales commission 2.8% + marketing 0.8%"
 
+[company.construction_financing]
+base = 0.015
+low = 0.01
+high = 0.025
+unit = "fraction of price for a site-built schedule"
+source = "NAHB 2024: financing 1.5% of price. Scaled by our build months / site-built months."
+
 [company.warranty]
 base = 0.01
 low = 0.005
@@ -342,6 +418,196 @@ high = 700
 unit = "$/kWh our installed cost"
 source = "Assumption. Stationary pack prices ~$70-108/kWh; soft costs are 40-60% of installed residential cost (NREL ATB)."
 
+[energy.self_use]
+base = 0.60
+low = 0.40
+high = 0.75
+unit = "share of solar output used in the home without a battery"
+source = "Assumption. Texas installer guide shows ~70% used at home, ~30% exported (NuWatt 2026)."
+
+[energy.battery_cycles_per_year]
+base = 300
+low = 200
+high = 350
+unit = "full-cycle equivalents/yr available for shifting solar"
+source = "Assumption: fewer in winter when there is little surplus"
+
+[energy.round_trip]
+base = 0.90
+unit = "battery round-trip efficiency"
+source = "Assumption, typical lithium-ion home battery"
+
+# --- Regions (rate plans set the value of the energy package) -----------------
+# Five archetypes. share = our sales mix, which follows where single-family
+# homes are built. Shares are normalized to sum to 1. The package each region
+# gets (none, solar only, solar + battery) is the one that saves the owner most,
+# financed in the mortgage; none if neither saves money.
+
+[region_ca.share]
+base = 0.08
+unit = "share of homes sold"
+source = "Assumption. Pacific division is a small share of US single-family starts."
+
+[region_ca.retail]
+base = 0.32
+low = 0.28
+high = 0.45
+unit = "$/kWh retail"
+source = "EIA: CA ~31.6-33.4 cents/kWh (Aug 2025, Mar 2026); HI 47-52 cents"
+
+[region_ca.export]
+base = 0.05
+low = 0.03
+high = 0.08
+unit = "$/kWh paid for exports"
+source = "CA NEM 3.0 exports ~$0.05-0.08/kWh"
+
+[region_ca.vpp_payment]
+base = 70
+low = 0
+high = 100
+unit = "$/kW-yr paid for battery capacity"
+source = "CA DSGS $62.10-82.80/kW-yr (Brattle)"
+
+[region_ca.solar_yield]
+base = 1600
+low = 1450
+high = 1750
+unit = "kWh/kW-yr"
+source = "Assumption"
+
+[region_ne.share]
+base = 0.05
+unit = "share of homes sold"
+source = "Assumption. Northeast is a small share of US single-family starts."
+
+[region_ne.retail]
+base = 0.3
+low = 0.25
+high = 0.32
+unit = "$/kWh retail"
+source = "EIA: MA ~30 cents/kWh, NY ~29.5-30 cents (2026)"
+
+[region_ne.export]
+base = 0.3
+low = 0.2
+high = 0.32
+unit = "$/kWh paid for exports"
+source = "MA keeps full retail net metering"
+
+[region_ne.vpp_payment]
+base = 250
+low = 150
+high = 325
+unit = "$/kW-yr paid for battery capacity"
+source = "MA ConnectedSolutions: $225-275/kW summer + $50/kW winter (2026, by utility)"
+
+[region_ne.solar_yield]
+base = 1150
+low = 1050
+high = 1250
+unit = "kWh/kW-yr"
+source = "Assumption"
+
+[region_se.share]
+base = 0.35
+unit = "share of homes sold"
+source = "Assumption. South Atlantic was about 1/3 of US single-family starts in 2025 (NAHB)."
+
+[region_se.retail]
+base = 0.15
+low = 0.13
+high = 0.18
+unit = "$/kWh retail"
+source = "EIA: FL ~15.1-15.2 cents/kWh (2025-26)"
+
+[region_se.export]
+base = 0.15
+low = 0.05
+high = 0.15
+unit = "$/kWh paid for exports"
+source = "FL keeps near full retail net metering; other Southeast states pay less"
+
+[region_se.vpp_payment]
+base = 0
+low = 0
+high = 75
+unit = "$/kW-yr paid for battery capacity"
+source = "Assumption: few residential battery programs"
+
+[region_se.solar_yield]
+base = 1450
+low = 1350
+high = 1550
+unit = "kWh/kW-yr"
+source = "Assumption"
+
+[region_tx.share]
+base = 0.27
+unit = "share of homes sold"
+source = "Assumption. West South Central, South Atlantic and Mountain together were ~62% of 2025 starts (NAHB)."
+
+[region_tx.retail]
+base = 0.155
+low = 0.14
+high = 0.17
+unit = "$/kWh retail"
+source = "EIA: TX ~15.5-16.4 cents/kWh (2025-26)"
+
+[region_tx.export]
+base = 0.06
+low = 0.03
+high = 0.09
+unit = "$/kWh paid for exports"
+source = "Texas fixed buyback plans pay ~3-8.5 cents/kWh (2026); some pay retail-match"
+
+[region_tx.vpp_payment]
+base = 75
+low = 0
+high = 100
+unit = "$/kW-yr paid for battery capacity"
+source = "EnergySage Texas example: $75/kW for peak events"
+
+[region_tx.solar_yield]
+base = 1550
+low = 1450
+high = 1650
+unit = "kWh/kW-yr"
+source = "Assumption"
+
+[region_mw.share]
+base = 0.25
+unit = "share of homes sold"
+source = "Assumption"
+
+[region_mw.retail]
+base = 0.13
+low = 0.12
+high = 0.16
+unit = "$/kWh retail"
+source = "EIA: ID ~12.3 cents, UT ~13.0 cents/kWh (2026)"
+
+[region_mw.export]
+base = 0.04
+low = 0.02
+high = 0.07
+unit = "$/kWh paid for exports"
+source = "Assumption: avoided-cost export credits"
+
+[region_mw.vpp_payment]
+base = 0
+low = 0
+high = 50
+unit = "$/kW-yr paid for battery capacity"
+source = "Assumption"
+
+[region_mw.solar_yield]
+base = 1400
+low = 1250
+high = 1600
+unit = "kWh/kW-yr"
+source = "Assumption"
+
 # --- Recurring services on homes delivered ---------------------------------
 
 [vpp.enabled]
@@ -361,12 +627,6 @@ base = 5
 unit = "kW per battery"
 source = "Assumption"
 
-[vpp.payment_per_kw_year]
-base = 70
-low = 30
-high = 100
-unit = "$/kW-yr"
-source = "California DSGS pays $62.10-82.80/kW-yr (Brattle). Many markets pay less."
 
 [vpp.our_share]
 base = 0.30
@@ -475,19 +735,14 @@ high = 0.03
 unit = "fraction vs mixed fuel"
 source = "RMI: all-electric bills from 9% lower (Minneapolis) to 3% higher (Boston)"
 
-[owner.solar_kwh_per_kw]
-base = 1400
-low = 1100
-high = 1700
-unit = "kWh/kW-yr"
-source = "Assumption"
 
-[owner.electricity_price]
-base = 0.165
-low = 0.12
-high = 0.30
-unit = "$/kWh"
-source = "EIA national average residential rate ~$0.165/kWh (2026, as reported)"
+
+[owner.monthly_carrying_cost]
+base = 2500
+low = 1800
+high = 3500
+unit = "$/month while waiting for the home"
+source = "Assumption: rent or a second housing payment during construction"
 
 [owner.gas_line_avoided]
 base = 7500

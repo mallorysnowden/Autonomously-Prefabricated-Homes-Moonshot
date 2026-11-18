@@ -143,6 +143,10 @@ def write_report(result: StandardResult, params, v: dict, run, out: Path, meta: 
             L += ["", fu.note]
         L.append("")
 
+    for title, headers, rows in result.tables:
+        L += [f"**{title}**", "", "| " + " | ".join(headers) + " |", "|" + "---|" * len(headers)]
+        L += ["| " + " | ".join(r) + " |" for r in rows]
+        L += [""]
     L += ["## FOAK to NOAK", "", "Cost multiplier vs the incumbent's cost for each component (1.00 = incumbent).", "",
           "| Component | FOAK | NOAK |", "|---|---|---|"]
     for c, (f, n) in result.learning.items():

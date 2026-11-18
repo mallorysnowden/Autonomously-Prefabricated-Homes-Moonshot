@@ -40,6 +40,16 @@ learning.rate_site,0.03,0.0,0.05,fraction per doubling,Site work learns slowly; 
 learning.rate_final,0.03,0.0,0.05,fraction per doubling,Assumption
 learning.first_year_experience,50,20,150,cumulative homes at end of FOAK,Assumption: pilot homes
 learning.noak_experience,5000,2000,20000,cumulative homes at which NOAK costs are reached,Assumption: definition of NOAK for this project
+site_system.enabled,1,,,1 = on,Base case. Set to 0 for conventional site work and crane set.
+site_system.foundation_share,0.58,,,foundation share of site + foundation cost,NAHB 2024: foundations 10.5% and site work 7.6% of construction cost
+site_system.foundation_reduction,0.4,0.15,0.6,fraction vs poured foundation,"Assumption: factory-made adjustable foundation on helical piles or precast pads, no curing time"
+site_system.sitework_reduction,0.1,0.0,0.25,fraction vs conventional site work,Assumption: less grading for a leveling foundation; utilities and driveway unchanged
+site_system.set_cost,0.035,0.02,0.06,fraction of site-built construction cost,Assumption: forklift or telehandler set instead of a crane; conventional modular is 0.06 above
+site_system.final_reduction,0.3,0.1,0.45,fraction vs conventional final stage,Assumption: plug-in plumbing and electrical couplings and pre-finished joints
+site_system.learning_rate,0.1,0.05,0.15,"per doubling, for site and final stage","Assumption: new hardware learns like MEP and finishes (0.10), not like conventional site work (0.03)"
+site_system.our_months,3.5,2.5,5.0,months from permit to occupancy,Target. Includes ~1.4 months permit to start (Census 2025).
+site_system.joint_tolerance_mm,3.0,1.5,6.0,"mm, assembled joint tolerance achieved",Target to prove in a prototype (no data yet)
+site_system.tolerance_needed_mm,3.0,,,"mm, tolerance at which joints need no finishing rework","Assumption: about 1/8 inch, finish-carpentry level"
 factory.capex,10000000,5000000,50000000,$ per factory,Reframe: <$5M of equipment for 250 homes/yr (claimed); Vantem ~$20M per factory; ground-up modular plants $40-60M (Offsite Builder)
 factory.capacity,250,150,500,homes/yr per factory at full output,Reframe FAB1 design capacity: 250 single-family homes/yr (not yet operating)
 factory.utilization,0.8,0.6,0.95,fraction after first year,"Assumption. 92% of modular factories report excess capacity (industry survey), so demand, not capacity, binds."
@@ -53,6 +63,7 @@ company.rd_years,2,1,3,yr before first sales,"Assumption: robotics, design platf
 company.rd_opex,15000000,8000000,30000000,$/yr,Assumption
 company.corporate_opex,10000000,5000000,20000000,$/yr once selling,"Assumption: design, engineering, sales, admin"
 company.selling_cost,0.036,0.02,0.06,fraction of home revenue,NAHB 2024: sales commission 2.8% + marketing 0.8%
+company.construction_financing,0.015,0.01,0.025,fraction of price for a site-built schedule,NAHB 2024: financing 1.5% of price. Scaled by our build months / site-built months.
 company.warranty,0.01,0.005,0.03,fraction of home revenue,Assumption
 company.ga_share,0.03,0.02,0.06,fraction of revenue,Assumption. NAHB 2024 builder overhead and general expense is 5.7% of price; part of that sits in factory fixed opex here.
 energy.enabled,1,,,1 = offered,Product as specified: onsite solar + storage
@@ -63,10 +74,37 @@ energy.solar_cost_per_w,1.8,1.4,2.3,$/W our installed cost,"Assumption: factory 
 energy.battery_kwh,13.5,,,kWh per home,One Powerwall-class unit
 energy.battery_price_per_kwh,800,650,1000,$/kWh charged,"Below 2026 installed retrofit prices of ~$700-1,300/kWh"
 energy.battery_cost_per_kwh,550,400,700,$/kWh our installed cost,Assumption. Stationary pack prices ~$70-108/kWh; soft costs are 40-60% of installed residential cost (NREL ATB).
+energy.self_use,0.6,0.4,0.75,share of solar output used in the home without a battery,"Assumption. Texas installer guide shows ~70% used at home, ~30% exported (NuWatt 2026)."
+energy.battery_cycles_per_year,300,200,350,full-cycle equivalents/yr available for shifting solar,Assumption: fewer in winter when there is little surplus
+energy.round_trip,0.9,,,battery round-trip efficiency,"Assumption, typical lithium-ion home battery"
+region_ca.share,0.08,,,share of homes sold,Assumption. Pacific division is a small share of US single-family starts.
+region_ca.retail,0.32,0.28,0.45,$/kWh retail,"EIA: CA ~31.6-33.4 cents/kWh (Aug 2025, Mar 2026); HI 47-52 cents"
+region_ca.export,0.05,0.03,0.08,$/kWh paid for exports,CA NEM 3.0 exports ~$0.05-0.08/kWh
+region_ca.vpp_payment,70,0,100,$/kW-yr paid for battery capacity,CA DSGS $62.10-82.80/kW-yr (Brattle)
+region_ca.solar_yield,1600,1450,1750,kWh/kW-yr,Assumption
+region_ne.share,0.05,,,share of homes sold,Assumption. Northeast is a small share of US single-family starts.
+region_ne.retail,0.3,0.25,0.32,$/kWh retail,"EIA: MA ~30 cents/kWh, NY ~29.5-30 cents (2026)"
+region_ne.export,0.3,0.2,0.32,$/kWh paid for exports,MA keeps full retail net metering
+region_ne.vpp_payment,250,150,325,$/kW-yr paid for battery capacity,"MA ConnectedSolutions: $225-275/kW summer + $50/kW winter (2026, by utility)"
+region_ne.solar_yield,1150,1050,1250,kWh/kW-yr,Assumption
+region_se.share,0.35,,,share of homes sold,Assumption. South Atlantic was about 1/3 of US single-family starts in 2025 (NAHB).
+region_se.retail,0.15,0.13,0.18,$/kWh retail,EIA: FL ~15.1-15.2 cents/kWh (2025-26)
+region_se.export,0.15,0.05,0.15,$/kWh paid for exports,FL keeps near full retail net metering; other Southeast states pay less
+region_se.vpp_payment,0,0,75,$/kW-yr paid for battery capacity,Assumption: few residential battery programs
+region_se.solar_yield,1450,1350,1550,kWh/kW-yr,Assumption
+region_tx.share,0.27,,,share of homes sold,"Assumption. West South Central, South Atlantic and Mountain together were ~62% of 2025 starts (NAHB)."
+region_tx.retail,0.155,0.14,0.17,$/kWh retail,EIA: TX ~15.5-16.4 cents/kWh (2025-26)
+region_tx.export,0.06,0.03,0.09,$/kWh paid for exports,Texas fixed buyback plans pay ~3-8.5 cents/kWh (2026); some pay retail-match
+region_tx.vpp_payment,75,0,100,$/kW-yr paid for battery capacity,EnergySage Texas example: $75/kW for peak events
+region_tx.solar_yield,1550,1450,1650,kWh/kW-yr,Assumption
+region_mw.share,0.25,,,share of homes sold,Assumption
+region_mw.retail,0.13,0.12,0.16,$/kWh retail,"EIA: ID ~12.3 cents, UT ~13.0 cents/kWh (2026)"
+region_mw.export,0.04,0.02,0.07,$/kWh paid for exports,Assumption: avoided-cost export credits
+region_mw.vpp_payment,0,0,50,$/kW-yr paid for battery capacity,Assumption
+region_mw.solar_yield,1400,1250,1600,kWh/kW-yr,Assumption
 vpp.enabled,1,,,1 = offered,Enhancement: aggregate home batteries into a virtual power plant
 vpp.enrollment,0.7,0.4,0.9,share of battery homes,Assumption
 vpp.kw_per_home,5,,,kW per battery,Assumption
-vpp.payment_per_kw_year,70,30,100,$/kW-yr,California DSGS pays $62.10-82.80/kW-yr (Brattle). Many markets pay less.
 vpp.our_share,0.3,0.15,0.5,share kept as aggregator,Assumption
 service.enabled,1,,,1 = offered,"Enhancement: home-systems monitoring, maintenance and extended warranty"
 service.fee_per_year,180,120,360,$/home-yr,Assumption (~$15/month)
@@ -84,8 +122,7 @@ adu.slot_fraction,0.5,0.33,1.0,factory slots per ADU (1 = same line time as a fu
 owner.mortgage_rate,0.065,0.05,0.08,fraction/yr,Assumption
 owner.energy_bill_mixed_fuel,3000,2000,4000,$/yr,"RMI new-construction studies: ~$3,100-3,800/yr in Concord and Boston examples"
 owner.all_electric_bill_change,-0.05,-0.09,0.03,fraction vs mixed fuel,RMI: all-electric bills from 9% lower (Minneapolis) to 3% higher (Boston)
-owner.solar_kwh_per_kw,1400,1100,1700,kWh/kW-yr,Assumption
-owner.electricity_price,0.165,0.12,0.3,$/kWh,"EIA national average residential rate ~$0.165/kWh (2026, as reported)"
+owner.monthly_carrying_cost,2500,1800,3500,$/month while waiting for the home,Assumption: rent or a second housing payment during construction
 owner.gas_line_avoided,7500,5000,10000,$ per home,"RMI: gas line extensions commonly cost $5,000-10,000 per home"
 score.impact,4,,,1-5,Judgment: US shortage of ~4.7M homes
 score.breakthrough,3,,,1-5,Judgment: robotic MEP and finishes would be a breakthrough; framing robots exist

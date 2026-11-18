@@ -64,3 +64,4 @@ class StandardResult:
     learning_investment: float  # extra cost paid above NOAK cost while learning
     kill_metrics: list[KillMetric]
     notes: list[str] = field(default_factory=list)
+    tables: list[tuple[str, list[str], list[list[str]]]] = field(default_factory=list)  # (title, headers, rows)
